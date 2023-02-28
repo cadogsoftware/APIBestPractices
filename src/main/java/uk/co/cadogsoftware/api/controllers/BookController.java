@@ -39,10 +39,14 @@ public class BookController {
    * @param title - an optional title to filter the results by.
    * @return - all books or books with the given title.
    */
+  // Aggregate root
+  // tag::get-aggregate-root[]
   @GetMapping("/books")
   public List<BookDTO> getBooks(@RequestParam(required = false) String title) {
+    log.debug("Getting all books");
     return bookService.getBooks(title);
   }
+  // end::get-aggregate-root[]
 
   /**
    * Gets a single book. Note that as we are getting a resource we use {@link PathVariable}, not
@@ -52,7 +56,7 @@ public class BookController {
    * @return - the Book with the given id.
    */
   @GetMapping("/books/{id}")
-  public BookDTO getOneBook(@PathVariable(value = "id") int id) {
+  public BookDTO getOneBook(@PathVariable(value = "id") Long id) {
     return bookService.getBook(id);
   }
 
@@ -62,7 +66,7 @@ public class BookController {
   }
 
   @DeleteMapping("books/{id}")
-  public void deleteBook(@PathVariable int id) {
+  public void deleteBook(@PathVariable Long id) {
     bookService.removeBook(id);
   }
 

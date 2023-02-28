@@ -5,7 +5,7 @@ package uk.co.cadogsoftware.api.exceptions;
  */
 public class BookNotFoundException extends RuntimeException {
 
-  public BookNotFoundException(int id) {
+  public BookNotFoundException(Long id) {
     super("Book cannot be found for id: " + id);
   }
 

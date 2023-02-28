@@ -7,7 +7,7 @@
 ### To manually test:
 curl -v -X GET localhost:8080/books
 curl -v -X GET localhost:8080/books/1
-curl -X DELETE localhost:8080/employees/3
+curl -X DELETE localhost:8080/books/3
 curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"id" : 10, "title": "Test Book", "author": "Sandy Orchid Else"}'
 
 ## Helpful Guides

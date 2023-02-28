@@ -2,8 +2,11 @@ package uk.co.cadogsoftware.api.controllers;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,9 +46,10 @@ class BookControllerTest {
   @Test
   void getOneBook_ShouldReturnTheCorrectBook() throws Exception {
     String pathToTest = "/books/1";
-    BookDTO firstBook = new BookDTO(1, "Animal Farm", "George Orwell");
+    BookDTO firstBook = new BookDTO("Animal Farm", "George Orwell");
+    firstBook.setId(1L);
 
-    when(service.getBook(1)).thenReturn(firstBook);
+    when(service.getBook(1L)).thenReturn(firstBook);
 
     /*
     There are several ways of testing the response from the controller here.
@@ -87,7 +91,7 @@ class BookControllerTest {
 
   @Test
   void getOneBook_NotFound() throws Exception {
-    int bookId = 123;
+    Long bookId = 123L;
     String pathToTest = "/books/" + bookId;
 
     when(service.getBook(bookId)).thenThrow(new BookNotFoundException(bookId));
@@ -99,8 +103,8 @@ class BookControllerTest {
   @Test
   void getBooks_NoTitleFilter() throws Exception {
     String pathToTest = "/books";
-    BookDTO firstBook = new BookDTO(1, "Title1", "Joe Bloggs");
-    BookDTO secondBook = new BookDTO(2, "Title2", "Brenda Hill");
+    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
+    BookDTO secondBook = new BookDTO("Title2", "Brenda Hill");
     List<BookDTO> bookList = List.of(firstBook, secondBook);
 
     when(service.getBooks(null)).thenReturn(bookList);
@@ -115,8 +119,8 @@ class BookControllerTest {
   void getBooks_WithTitleFilter_BooksFound() throws Exception {
     String title = "fred";
     String pathToTest = "/books?title=" + title;
-    BookDTO firstBook = new BookDTO(1, "Title1", "Joe Bloggs");
-    BookDTO secondBook = new BookDTO(2, "Title2", "Brenda Hill");
+    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
+    BookDTO secondBook = new BookDTO("Title2", "Brenda Hill");
     List<BookDTO> bookList = List.of(firstBook, secondBook);
 
     when(service.getBooks(title)).thenReturn(bookList);
@@ -140,6 +144,31 @@ class BookControllerTest {
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
         .andExpect(content().json(expectedResponseContent));
+  }
+
+  @Test
+  void addBook() throws Exception {
+    String pathToTest = "/books";
+    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
+
+    when(service.addBook(firstBook)).thenReturn(firstBook);
+
+    String firstBookAsJson = objectMapper.writeValueAsString(firstBook);
+
+    this.mockMvc.perform(post(pathToTest).content(firstBookAsJson).contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(content().json(firstBookAsJson));
+  }
+
+  @Test
+  void removeBook() throws Exception {
+    String pathToTest = "/books/1";
+    Long bookId = 1L;
+
+    this.mockMvc.perform(delete(pathToTest))
+        .andExpect(status().isOk());
+
+    verify(service).removeBook(bookId);
   }
 
 }
