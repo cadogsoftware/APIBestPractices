@@ -15,6 +15,8 @@ import uk.co.cadogsoftware.api.services.BookService;
 
 /**
  * Handles REST requests for {@link BookDTO}s.
+ *
+ * @author Richard Morgan
  */
 @RestController
 @Slf4j
