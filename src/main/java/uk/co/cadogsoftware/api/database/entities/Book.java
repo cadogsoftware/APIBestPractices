@@ -1,23 +1,32 @@
-package uk.co.cadogsoftware.api.dtos;
+package uk.co.cadogsoftware.api.database.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Objects;
 
 /**
- * Details of the book(s) exposed to the end clients.
- *
+ * Represents the Book in the database.
  */
-public class BookDTO {
+@Entity
+public class Book {
 
+  private @Id
+  @GeneratedValue Long id;
   private String title;
   private String author;
 
-  public BookDTO() {
+  public Book() {
   }
 
-  public BookDTO(String title, String author) {
+  public Book(String title, String author) {
 
     this.title = title;
     this.author = author;
+  }
+
+  public Long getId() {
+    return this.id;
   }
 
   public String getTitle() {
@@ -42,22 +51,23 @@ public class BookDTO {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof BookDTO)) {
+    if (!(o instanceof Book)) {
       return false;
     }
-    BookDTO book = (BookDTO) o;
-    return Objects.equals(this.title, book.title)
+    Book book = (Book) o;
+    return Objects.equals(this.id, book.id) && Objects.equals(this.title, book.title)
         && Objects.equals(this.author, book.author);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.title, this.author);
+    return Objects.hash(this.id, this.title, this.author);
   }
 
   @Override
   public String toString() {
-    return "BookDTO{name='" + this.title + '\'' + ", role='" + this.author
+    return "Book{" + "id=" + this.id + ", title='" + this.title + '\'' + ", author='" + this.author
         + '\'' + '}';
   }
+
 }

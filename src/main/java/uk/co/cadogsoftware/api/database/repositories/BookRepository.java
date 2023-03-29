@@ -1,8 +1,11 @@
 package uk.co.cadogsoftware.api.database.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uk.co.cadogsoftware.api.dtos.BookDTO;
+import uk.co.cadogsoftware.api.database.entities.Book;
 
-public interface BookRepository extends JpaRepository<BookDTO, Long> {
+/**
+ * Used to interact with Book entries in the database.
+ */
+public interface BookRepository extends JpaRepository<Book, Long> {
 
 }

@@ -47,7 +47,6 @@ class BookControllerTest {
   void getOneBook_ShouldReturnTheCorrectBook() throws Exception {
     String pathToTest = "/books/1";
     BookDTO firstBook = new BookDTO("Animal Farm", "George Orwell");
-    firstBook.setId(1L);
 
     when(service.getBook(1L)).thenReturn(firstBook);
 
@@ -66,7 +65,7 @@ class BookControllerTest {
     ResultActions result2 = this.mockMvc.perform(get(pathToTest));
     result2.andExpect(status().isOk());
     result2.andExpect(content().json(
-        "{ \"id\": 1, \"title\": \"Animal Farm\", \"author\": \"George Orwell\"}"
+        "{ \"title\": \"Animal Farm\", \"author\": \"George Orwell\"}"
     ));
 
     // 3. Test the json in the response.
