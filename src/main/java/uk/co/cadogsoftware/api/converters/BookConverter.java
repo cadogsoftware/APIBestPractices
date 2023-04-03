@@ -24,8 +24,4 @@ public class BookConverter {
     return books.stream().map(this::convertToBookDTO).toList();
   }
 
-  public List<Book> convertToBookList(List<BookDTO> bookDtos) {
-    return bookDtos.stream().map(this::convertToBook).toList();
-  }
-
 }

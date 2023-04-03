@@ -4,6 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.ISBN_1;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_1;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_2;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_3;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOK_1;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOK_2;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,24 +34,6 @@ import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
  */
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
-
-  private static final String AUTHOR_1 = "George Orwell";
-  private static final String AUTHOR_2 = "Tom Smith";
-  private static final String AUTHOR_3 = "The Fonz";
-
-  private static final String ISBN_1 = "123";
-  private static final String ISBN_2 = "456";
-  private static final String ISBN_3 = "789";
-
-  private static final String TITLE_1 = "Animal Farm";
-  private static final String TITLE_2 = "Farming World";
-  private static final String TITLE_3 = "Happy Days";
-
-  private static final BookDTO TEST_BOOKDTO_1 = new BookDTO(AUTHOR_1, ISBN_1, TITLE_1);
-  private static final BookDTO TEST_BOOKDTO_2 = new BookDTO(AUTHOR_2, ISBN_2, TITLE_2);
-  private static final BookDTO TEST_BOOKDTO_3 = new BookDTO(AUTHOR_3, ISBN_3, TITLE_3);
-  private static final Book TEST_BOOK_1 = new Book(AUTHOR_1, ISBN_1, TITLE_1);
-  private static final Book TEST_BOOK_2 = new Book(AUTHOR_2, ISBN_2, TITLE_2);
 
   @InjectMocks
   private BookService bookService;
