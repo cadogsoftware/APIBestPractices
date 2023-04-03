@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -12,37 +14,22 @@ import lombok.ToString;
 @Entity
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor
 public class Book {
 
-  private @Id
-  @GeneratedValue Long id;
+  @Getter
+  private @Id @GeneratedValue Long id;
+  @Getter
   private String author;
+  @Getter
   private String isbn;
+  @Getter
   private String title;
-
-  public Book() {
-  }
 
   public Book(String author, String isbn, String title) {
     this.author = author;
     this.isbn = isbn;
     this.title = title;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public String getAuthor() {
-    return author;
-  }
-
-  public String getIsbn() {
-    return isbn;
-  }
-
-  public String getTitle() {
-    return title;
   }
 
 }
