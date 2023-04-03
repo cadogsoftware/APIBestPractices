@@ -1,7 +1,5 @@
 package uk.co.cadogsoftware.api.exceptions;
 
-import uk.co.cadogsoftware.api.dtos.BookDTO;
-
 /**
  * Used to indicate that a book already exists.
  */
