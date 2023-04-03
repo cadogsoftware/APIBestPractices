@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -112,20 +113,22 @@ class BookServiceTest {
     List<Book> testBookList = List.of(TEST_BOOK_1, TEST_BOOK_2);
     List<BookDTO> testBookDtoList = List.of(TEST_BOOKDTO_1, TEST_BOOKDTO_2);
 
-    when(bookRepository.findAll()).thenReturn(testBookList);
-    when(bookConverter.convertToBookDTOList(testBookList)).thenReturn(testBookDtoList);
+    when(bookRepository.findByTitleAndAuthor(TEST_BOOKDTO_1.title(),
+        TEST_BOOKDTO_1.author())).thenReturn(testBookList);
 
     BookAlreadyExistsException bookAlreadyExistsException = assertThrows(
         BookAlreadyExistsException.class,
         () -> bookService.addBook(TEST_BOOKDTO_1));
-    assertEquals("Book already exists: " + TEST_BOOKDTO_1, bookAlreadyExistsException.getMessage());
+    assertEquals("Book already exists for title: Animal Farm and author: George Orwell",
+        bookAlreadyExistsException.getMessage());
   }
 
   @Test
-  void addBook() {
+  void addBook_DoesNotAlreadyExist() {
     List<Book> testBookList = List.of(TEST_BOOK_1, TEST_BOOK_2);
 
-    when(bookRepository.findAll()).thenReturn(testBookList);
+    when(bookRepository.findByTitleAndAuthor(TEST_BOOKDTO_3.title(),
+        TEST_BOOKDTO_3.author())).thenReturn(Collections.emptyList());
 
     BookDTO returnedBook = bookService.addBook(TEST_BOOKDTO_3);
     verify(bookRepository).save(bookConverter.convertToBook(TEST_BOOKDTO_3));

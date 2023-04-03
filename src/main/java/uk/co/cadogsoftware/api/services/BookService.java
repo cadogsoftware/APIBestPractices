@@ -50,10 +50,13 @@ public class BookService {
 
   public BookDTO addBook(BookDTO bookDto) {
 
-    // TODO: check to see if the ISBN already exists.
+    if (doesBookExistByIsbn(bookDto)) {
+      throw new BookAlreadyExistsException("Book already exists for ISBN: " + bookDto.isbn());
+    }
 
     if (doesBookExistByTitleAndAuthor(bookDto)) {
-      throw new BookAlreadyExistsException(bookDto);
+      throw new BookAlreadyExistsException(
+          "Book already exists for title: " + bookDto.title() + " and author: " + bookDto.author());
     }
 
     Book book = bookConverter.convertToBook(bookDto);
@@ -63,16 +66,14 @@ public class BookService {
   }
 
   private boolean doesBookExistByTitleAndAuthor(BookDTO bookDtoToLookFor) {
-
-    // TODO: use repository.findBy here.
-    List<BookDTO> allMatchingBooksByTitleAndAuthor =
-        getAllBooks().stream()
-            .filter(bookDTO -> bookDTO.title().equals(bookDtoToLookFor.title().trim()))
-            .filter(bookDTO -> bookDTO.author().equals(bookDtoToLookFor.author().trim()))
-            .toList();
-
+    List<Book> allMatchingBooksByTitleAndAuthor = bookRepository.findByTitleAndAuthor(
+        bookDtoToLookFor.title().trim(), bookDtoToLookFor.author().trim());
     return !allMatchingBooksByTitleAndAuthor.isEmpty();
+  }
 
+  private boolean doesBookExistByIsbn(BookDTO bookDTO) {
+    Book allMatchingBooksByIsbn = bookRepository.findByIsbn(bookDTO.isbn());
+    return allMatchingBooksByIsbn != null;
   }
 
   private List<BookDTO> getAllBooks() {
