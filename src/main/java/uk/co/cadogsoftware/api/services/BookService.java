@@ -2,6 +2,7 @@ package uk.co.cadogsoftware.api.services;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import uk.co.cadogsoftware.api.converters.BookConverter;
@@ -20,6 +21,7 @@ import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookService {
 
   private final BookRepository bookRepository;
@@ -45,7 +47,13 @@ public class BookService {
   }
 
   public void removeBook(String isbn) {
-    bookRepository.deleteByIsbn(isbn);
+    Book book = bookRepository.findByIsbn(isbn);
+    if (book != null) {
+      bookRepository.deleteById(book.getId());
+    } else {
+      log.warn("Book requested for deletion but was not found for ISBN: {}", isbn);
+    }
+
   }
 
   public BookDTO addBook(BookDTO bookDto) {

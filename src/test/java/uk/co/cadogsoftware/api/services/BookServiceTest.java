@@ -3,6 +3,7 @@ package uk.co.cadogsoftware.api.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.ISBN_1;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_1;
@@ -124,10 +125,21 @@ class BookServiceTest {
   }
 
   @Test
-  void removeBook() {
+  void removeBook_Exists() {
+    when(bookRepository.findByIsbn(ISBN_1)).thenReturn(TEST_BOOK_1);
+
     bookService.removeBook(ISBN_1);
 
-    verify(bookRepository).deleteByIsbn(ISBN_1);
+    verify(bookRepository).deleteById(TEST_BOOK_1.getId());
+  }
+
+  @Test
+  void removeBook_DoesNotExist() {
+    when(bookRepository.findByIsbn(ISBN_1)).thenReturn(null);
+
+    bookService.removeBook(ISBN_1);
+
+    verifyNoMoreInteractions(bookRepository);
   }
 
 }

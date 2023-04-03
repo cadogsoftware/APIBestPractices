@@ -7,7 +7,7 @@ import uk.co.cadogsoftware.api.database.entities.Book;
 /**
  * Used to interact with Book entries in the database.
  */
-public interface BookRepository extends JpaRepository<Book, String> {
+public interface BookRepository extends JpaRepository<Book, Long> {
 
   Book findByIsbn(String isbn);
   List<Book> findByTitleContaining(String titleToMatch);
