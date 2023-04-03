@@ -6,18 +6,14 @@
 
 ### To manually test:
 curl -v -X GET localhost:8080/books
-curl -v -X GET localhost:8080/books/1
-curl -X DELETE localhost:8080/books/3
-curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"id" : 10, "title": "Test Book", "author": "Sandy Orchid Else"}'
-
-Other commands will follow soon.....
+curl -v -X GET localhost:8080/books/1-2-3
+curl -X DELETE localhost:8080/books/1-2-3
+curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 9-9-9, "title": "Test Book", "author": "Sandy Orchid Else"}'
 
 ## Helpful Guides
 
 ### If you are just starting off
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-
-
 
 ### More detailed guides
 * [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
@@ -31,8 +27,6 @@ Other commands will follow soon.....
 
 ### TODO
 
-Test class for BookConverter
-Test coverage
 HATEOS
 Postman pack 
 CI/CD
