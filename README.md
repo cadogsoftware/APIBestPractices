@@ -1,5 +1,5 @@
 
-## Useful commands
+## Useful commands for this project
 
 ### To start up:
 ./mvnw clean spring-boot:run
@@ -9,6 +9,8 @@ curl -v -X GET localhost:8080/books
 curl -v -X GET localhost:8080/books/1
 curl -X DELETE localhost:8080/books/3
 curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"id" : 10, "title": "Test Book", "author": "Sandy Orchid Else"}'
+
+Other commands will follow soon.....
 
 ## Helpful Guides
 
@@ -25,3 +27,12 @@ curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"id" :
 * [REST APIs must be hyper-text driven](https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven)
 * [RedHat - What is a REST API?](https://www.redhat.com/en/topics/api/what-is-a-rest-api)
 * [Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
+
+
+### TODO
+
+Test class for BookConverter
+Test coverage
+HATEOS
+Postman pack 
+CI/CD

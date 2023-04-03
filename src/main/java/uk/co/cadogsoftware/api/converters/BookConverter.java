@@ -13,17 +13,11 @@ import uk.co.cadogsoftware.api.dtos.BookDTO;
 public class BookConverter {
 
   public Book convertToBook(BookDTO bookDTO) {
-    Book book = new Book();
-    book.setAuthor(bookDTO.getAuthor());
-    book.setTitle(bookDTO.getTitle());
-    return book;
+    return new Book(bookDTO.author(), bookDTO.isbn(), bookDTO.title());
   }
 
   public BookDTO convertToBookDTO(Book book) {
-    BookDTO bookDTO = new BookDTO();
-    bookDTO.setAuthor(book.getAuthor());
-    bookDTO.setTitle(book.getTitle());
-    return bookDTO;
+    return new BookDTO(book.getAuthor(), book.getIsbn(), book.getTitle());
   }
 
   public List<BookDTO> convertToBookDTOList(List<Book> books) {

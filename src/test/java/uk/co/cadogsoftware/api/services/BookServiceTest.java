@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,13 +28,23 @@ import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
-  private static final BookDTO TEST_BOOKDTO_1 = new BookDTO("Animal Farm", "George Orwell");
-  private static final BookDTO TEST_BOOKDTO_2 = new BookDTO("Farming World", "Tom Smith");
-  private static final BookDTO TEST_BOOKDTO_3 = new BookDTO("Happy Days", "The Fonz");
+  private static final String AUTHOR_1 = "George Orwell";
+  private static final String AUTHOR_2 = "Tom Smith";
+  private static final String AUTHOR_3 = "The Fonz";
 
-  private static final Book TEST_BOOK_1 = new Book("Animal Farm", "George Orwell");
-  private static final Book TEST_BOOK_2 = new Book("Farming World", "Tom Smith");
-  private static final Long BOOK_ID = 1L;
+  private static final String ISBN_1 = "123";
+  private static final String ISBN_2 = "456";
+  private static final String ISBN_3 = "789";
+
+  private static final String TITLE_1 = "Animal Farm";
+  private static final String TITLE_2 = "Farming World";
+  private static final String TITLE_3 = "Happy Days";
+
+  private static final BookDTO TEST_BOOKDTO_1 = new BookDTO(AUTHOR_1, ISBN_1, TITLE_1);
+  private static final BookDTO TEST_BOOKDTO_2 = new BookDTO(AUTHOR_2, ISBN_2, TITLE_2);
+  private static final BookDTO TEST_BOOKDTO_3 = new BookDTO(AUTHOR_3, ISBN_3, TITLE_3);
+  private static final Book TEST_BOOK_1 = new Book(AUTHOR_1, ISBN_1, TITLE_1);
+  private static final Book TEST_BOOK_2 = new Book(AUTHOR_2, ISBN_2, TITLE_2);
 
   @InjectMocks
   private BookService bookService;
@@ -48,23 +57,23 @@ class BookServiceTest {
 
   @Test
   void getBook_ReturnsCorrectBook() {
-    when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(TEST_BOOK_1));
+    when(bookRepository.findByIsbn(ISBN_1)).thenReturn(TEST_BOOK_1);
     when(bookConverter.convertToBookDTO(TEST_BOOK_1)).thenReturn(TEST_BOOKDTO_1);
 
-    BookDTO bookDTO = bookService.getBook(BOOK_ID);
+    BookDTO bookDTO = bookService.getBook(ISBN_1);
 
     assertEquals(TEST_BOOKDTO_1, bookDTO);
   }
 
   @Test
   void getBook_NotFound() {
-    Long bookIdNotFound = 999L;
-    when(bookRepository.findById(bookIdNotFound)).thenReturn(Optional.empty());
+    String bookIsbnNotFound = "777";
+    when(bookRepository.findByIsbn(bookIsbnNotFound)).thenReturn(null);
 
     BookNotFoundException bookNotFoundException = assertThrows(BookNotFoundException.class,
-        () -> bookService.getBook(bookIdNotFound));
+        () -> bookService.getBook(bookIsbnNotFound));
 
-    assertEquals("Book cannot be found for id: " + bookIdNotFound,
+    assertEquals("Book cannot be found for ISBN: " + bookIsbnNotFound,
         bookNotFoundException.getMessage());
   }
 
@@ -80,7 +89,7 @@ class BookServiceTest {
     when(bookRepository.findAll()).thenReturn(expectedBookList);
     when(bookConverter.convertToBookDTOList(expectedBookList)).thenReturn(expectedBookDtoList);
 
-    List<BookDTO> books = bookService.getBooks(input);
+    List<BookDTO> books = bookService.findBooks(input);
     assertEquals(expectedBookDtoList, books);
   }
 
@@ -91,10 +100,10 @@ class BookServiceTest {
     List<Book> expectedBookList = List.of(TEST_BOOK_1, TEST_BOOK_2);
     List<BookDTO> expectedBookDtoList = List.of(TEST_BOOKDTO_1, TEST_BOOKDTO_2);
 
-    when(bookRepository.findAll()).thenReturn(expectedBookList);
+    when(bookRepository.findByTitleContaining(input)).thenReturn(expectedBookList);
     when(bookConverter.convertToBookDTOList(expectedBookList)).thenReturn(expectedBookDtoList);
 
-    List<BookDTO> books = bookService.getBooks(input);
+    List<BookDTO> books = bookService.findBooks(input);
     assertEquals(expectedBookDtoList, books);
   }
 
@@ -125,9 +134,9 @@ class BookServiceTest {
 
   @Test
   void removeBook() {
-    bookService.removeBook(BOOK_ID);
+    bookService.removeBook(ISBN_1);
 
-    verify(bookRepository).deleteById(BOOK_ID);
+    verify(bookRepository).deleteByIsbn(ISBN_1);
   }
 
 }

@@ -39,14 +39,14 @@ public class BookController {
    * </p>
    *
    * @param title - an optional title to filter the results by.
-   * @return - all books or books with the given title.
+   * @return - all books or books containing the given title.
    */
   // Aggregate root
   // tag::get-aggregate-root[]
   @GetMapping("/books")
-  public List<BookDTO> getBooks(@RequestParam(required = false) String title) {
-    log.debug("Getting all books");
-    return bookService.getBooks(title);
+  public List<BookDTO> findBooks(@RequestParam(required = false) String title) {
+    log.debug("Getting all books with a title that contains: {} ", title);
+    return bookService.findBooks(title);
   }
   // end::get-aggregate-root[]
 
@@ -54,22 +54,25 @@ public class BookController {
    * Gets a single book. Note that as we are getting a resource we use {@link PathVariable}, not
    * {@link RequestParam}, which should generally be used for sorting or filtering the results.
    *
-   * @param id - the id of the Book.
-   * @return - the Book with the given id.
+   * @param isbn - the ISBN of the Book.
+   * @return - the Book with the given ISBN.
    */
-  @GetMapping("/books/{id}")
-  public BookDTO getOneBook(@PathVariable(value = "id") Long id) {
-    return bookService.getBook(id);
+  @GetMapping("/books/{isbn}")
+  public BookDTO getOneBook(@PathVariable(value = "isbn") String isbn) {
+    // TODO: validate input
+    return bookService.getBook(isbn);
   }
 
   @PostMapping("/books")
   public BookDTO addBook(@RequestBody BookDTO bookDTO) {
+    // TODO: validate input
     return bookService.addBook(bookDTO);
   }
 
-  @DeleteMapping("books/{id}")
-  public void deleteBook(@PathVariable Long id) {
-    bookService.removeBook(id);
+  @DeleteMapping("books/{isbn}")
+  public void deleteBook(@PathVariable String isbn) {
+    // TODO: validate isbn here.
+    bookService.removeBook(isbn);
   }
 
 }

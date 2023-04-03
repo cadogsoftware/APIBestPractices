@@ -40,15 +40,15 @@ class BookControllerTest {
   private BookService service;
 
   /**
-   * This test shows several ways of checking the response. Of course there is no need
-   * to do all of these but I've left them in here as examples of what is possible.
+   * This test shows several ways of checking the response. Of course there is no need to do all of
+   * these but I've left them in here as examples of what is possible.
    */
   @Test
   void getOneBook_ShouldReturnTheCorrectBook() throws Exception {
     String pathToTest = "/books/1";
-    BookDTO firstBook = new BookDTO("Animal Farm", "George Orwell");
+    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
 
-    when(service.getBook(1L)).thenReturn(firstBook);
+    when(service.getBook("1")).thenReturn(firstBook);
 
     /*
     There are several ways of testing the response from the controller here.
@@ -65,7 +65,7 @@ class BookControllerTest {
     ResultActions result2 = this.mockMvc.perform(get(pathToTest));
     result2.andExpect(status().isOk());
     result2.andExpect(content().json(
-        "{ \"title\": \"Animal Farm\", \"author\": \"George Orwell\"}"
+        "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}"
     ));
 
     // 3. Test the json in the response.
@@ -90,23 +90,23 @@ class BookControllerTest {
 
   @Test
   void getOneBook_NotFound() throws Exception {
-    Long bookId = 123L;
-    String pathToTest = "/books/" + bookId;
+    String isbn = "123";
+    String pathToTest = "/books/" + isbn;
 
-    when(service.getBook(bookId)).thenThrow(new BookNotFoundException(bookId));
+    when(service.getBook(isbn)).thenThrow(new BookNotFoundException(isbn));
 
     this.mockMvc.perform(get(pathToTest)).andDo(print()).andExpect(status().isNotFound())
-        .andExpect(content().string(containsString("Book cannot be found for id: " + bookId)));
+        .andExpect(content().string(containsString("Book cannot be found for ISBN: " + isbn)));
   }
 
   @Test
   void getBooks_NoTitleFilter() throws Exception {
     String pathToTest = "/books";
-    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
-    BookDTO secondBook = new BookDTO("Title2", "Brenda Hill");
+    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
+    BookDTO secondBook = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
     List<BookDTO> bookList = List.of(firstBook, secondBook);
 
-    when(service.getBooks(null)).thenReturn(bookList);
+    when(service.findBooks(null)).thenReturn(bookList);
 
     String expectedBookListAsJson = objectMapper.writeValueAsString(bookList);
     this.mockMvc.perform(get(pathToTest))
@@ -118,11 +118,11 @@ class BookControllerTest {
   void getBooks_WithTitleFilter_BooksFound() throws Exception {
     String title = "fred";
     String pathToTest = "/books?title=" + title;
-    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
-    BookDTO secondBook = new BookDTO("Title2", "Brenda Hill");
+    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
+    BookDTO secondBook = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
     List<BookDTO> bookList = List.of(firstBook, secondBook);
 
-    when(service.getBooks(title)).thenReturn(bookList);
+    when(service.findBooks(title)).thenReturn(bookList);
 
     String expectedBookListAsJson = objectMapper.writeValueAsString(bookList);
     this.mockMvc.perform(get(pathToTest))
@@ -137,7 +137,7 @@ class BookControllerTest {
     String title = "fred";
     String pathToTest = "/books?title=" + title;
 
-    when(service.getBooks(title)).thenReturn(List.of());
+    when(service.findBooks(title)).thenReturn(List.of());
 
     String expectedResponseContent = "[]";
     this.mockMvc.perform(get(pathToTest))
@@ -148,8 +148,7 @@ class BookControllerTest {
   @Test
   void addBook() throws Exception {
     String pathToTest = "/books";
-    BookDTO firstBook = new BookDTO("Title1", "Joe Bloggs");
-
+    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
     when(service.addBook(firstBook)).thenReturn(firstBook);
 
     String firstBookAsJson = objectMapper.writeValueAsString(firstBook);
@@ -160,14 +159,27 @@ class BookControllerTest {
   }
 
   @Test
-  void removeBook() throws Exception {
+  @DisplayName("Deleting a book that exists returns ok.")
+  void removeBook_Exists() throws Exception {
     String pathToTest = "/books/1";
-    Long bookId = 1L;
+    String isbn = "1";
 
     this.mockMvc.perform(delete(pathToTest))
         .andExpect(status().isOk());
 
-    verify(service).removeBook(bookId);
+    verify(service).removeBook(isbn);
+  }
+
+  @Test
+  @DisplayName("Deleting a book that does not exist returns ok.")
+  void removeBook_DoesNotExist() throws Exception {
+    String pathToTest = "/books/199";
+    String isbn = "199";
+
+    this.mockMvc.perform(delete(pathToTest))
+        .andExpect(status().isOk());
+
+    verify(service).removeBook(isbn);
   }
 
 }

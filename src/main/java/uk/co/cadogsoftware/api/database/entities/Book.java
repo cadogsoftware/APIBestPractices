@@ -3,71 +3,46 @@ package uk.co.cadogsoftware.api.database.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Represents the Book in the database.
  */
 @Entity
+@EqualsAndHashCode
+@ToString
 public class Book {
 
   private @Id
   @GeneratedValue Long id;
-  private String title;
   private String author;
+  private String isbn;
+  private String title;
 
   public Book() {
   }
 
-  public Book(String title, String author) {
-
-    this.title = title;
+  public Book(String author, String isbn, String title) {
     this.author = author;
+    this.isbn = isbn;
+    this.title = title;
   }
 
   public Long getId() {
-    return this.id;
-  }
-
-  public String getTitle() {
-    return this.title;
+    return id;
   }
 
   public String getAuthor() {
-    return this.author;
+    return author;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public String getIsbn() {
+    return isbn;
   }
 
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Book)) {
-      return false;
-    }
-    Book book = (Book) o;
-    return Objects.equals(this.id, book.id) && Objects.equals(this.title, book.title)
-        && Objects.equals(this.author, book.author);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(this.id, this.title, this.author);
-  }
-
-  @Override
-  public String toString() {
-    return "Book{" + "id=" + this.id + ", title='" + this.title + '\'' + ", author='" + this.author
-        + '\'' + '}';
+  public String getTitle() {
+    return title;
   }
 
 }

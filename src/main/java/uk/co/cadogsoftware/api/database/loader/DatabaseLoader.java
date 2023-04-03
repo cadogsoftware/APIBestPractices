@@ -18,9 +18,9 @@ public class DatabaseLoader {
   CommandLineRunner initDatabase(BookRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new Book("George Orwell", "Animal Farm")));
-      log.info("Preloading " + repository.save(new Book("The Lord of the Rings", "J. R. R. Tolkien")));
-      log.info("Preloading " + repository.save(new Book("To Kill a Mockingbird", "Harper Lee")));
+      log.info("Preloading " + repository.save(new Book("George Orwell", "1-2-3", "Animal Farm")));
+      log.info("Preloading " + repository.save(new Book("J. R. R. Tolkien", "4-5-6", "The Lord of the Rings")));
+      log.info("Preloading " + repository.save(new Book("Harper Lee", "7-8-9","To Kill a Mockingbird")));
     };
   }
 }

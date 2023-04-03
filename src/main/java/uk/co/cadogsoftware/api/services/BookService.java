@@ -26,26 +26,32 @@ public class BookService {
 
   private final BookConverter bookConverter;
 
-  public BookDTO getBook(Long id) {
-    Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+  public BookDTO getBook(String isbn) {
+    Book book = bookRepository.findByIsbn(isbn);
+    if (book == null) {
+      throw new BookNotFoundException(isbn);
+    }
     return bookConverter.convertToBookDTO(book);
   }
 
-  public List<BookDTO> getBooks(String titleFilter) {
+  public List<BookDTO> findBooks(String titleFilter) {
 
     if (StringUtils.hasText(titleFilter)) {
-      return getBookByTitle(titleFilter);
+      return findBooksMatchingTitle(titleFilter);
     } else {
       return getAllBooks();
     }
 
   }
 
-  public void removeBook(Long bookId) {
-    bookRepository.deleteById(bookId);
+  public void removeBook(String isbn) {
+    bookRepository.deleteByIsbn(isbn);
   }
 
   public BookDTO addBook(BookDTO bookDto) {
+
+    // TODO: check to see if the ISBN already exists.
+
     if (doesBookExistByTitleAndAuthor(bookDto)) {
       throw new BookAlreadyExistsException(bookDto);
     }
@@ -61,8 +67,8 @@ public class BookService {
     // TODO: use repository.findBy here.
     List<BookDTO> allMatchingBooksByTitleAndAuthor =
         getAllBooks().stream()
-            .filter(bookDTO -> bookDTO.getTitle().equals(bookDtoToLookFor.getTitle().trim()))
-            .filter(bookDTO -> bookDTO.getAuthor().equals(bookDtoToLookFor.getAuthor().trim()))
+            .filter(bookDTO -> bookDTO.title().equals(bookDtoToLookFor.title().trim()))
+            .filter(bookDTO -> bookDTO.author().equals(bookDtoToLookFor.author().trim()))
             .toList();
 
     return !allMatchingBooksByTitleAndAuthor.isEmpty();
@@ -74,8 +80,8 @@ public class BookService {
     return bookConverter.convertToBookDTOList(books);
   }
 
-  private List<BookDTO> getBookByTitle(String titleFilter) {
-    return getAllBooks().stream().filter(book -> book.getTitle().contains(titleFilter.trim())).toList();
-    // If no books are found just return an empty list.
+  private List<BookDTO> findBooksMatchingTitle(String titleFilter) {
+    List<Book> books = bookRepository.findByTitleContaining(titleFilter);
+    return bookConverter.convertToBookDTOList(books);
   }
 }
