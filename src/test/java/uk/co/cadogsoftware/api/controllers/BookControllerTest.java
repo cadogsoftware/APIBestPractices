@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import uk.co.cadogsoftware.api.assemblers.BookModelAssembler;
 import uk.co.cadogsoftware.api.dtos.BookDTO;
 import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
 import uk.co.cadogsoftware.api.services.BookService;
@@ -27,7 +28,7 @@ import uk.co.cadogsoftware.api.services.BookService;
 /**
  * Test class for {@link BookController}.
  */
-@WebMvcTest(BookController.class)
+@WebMvcTest({BookController.class, BookModelAssembler.class})
 class BookControllerTest {
 
   @Autowired
@@ -39,9 +40,12 @@ class BookControllerTest {
   @MockBean
   private BookService service;
 
+  @Autowired
+  private BookModelAssembler bookModelAssembler;
+
   /**
    * This test shows several ways of checking the response. Of course there is no need to do all of
-   * these but I've left them in here as examples of what is possible.
+   * these, but I've left them in here as examples of what is possible.
    */
   @Test
   void getOneBook_ShouldReturnTheCorrectBook() throws Exception {
@@ -57,16 +61,19 @@ class BookControllerTest {
     My preferred method is the last one - number 5.
     */
 
+    String expectedLinks = "\"_links\":{\"self\":{\"href\":\"http://localhost/books/1\"},\"books\":{\"href\":\"http://localhost/books?title=\"}}";
+
     // 1. Call the Controller and test that the response contains what we expect.
     this.mockMvc.perform(get(pathToTest)).andDo(print()).andExpect(status().isOk())
-        .andExpect(content().string(containsString("Animal Farm")));
+        .andExpect(content().string(containsString("Animal Farm")))
+        .andExpect(content().string(containsString(expectedLinks)));
 
     // 2. Split it up a bit and test the json in the response as a json String.
     ResultActions result2 = this.mockMvc.perform(get(pathToTest));
-    result2.andExpect(status().isOk());
-    result2.andExpect(content().json(
-        "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}"
-    ));
+    result2.andExpect(status().isOk())
+        .andExpect(content().json(
+            "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}"
+        )).andExpect(content().string(containsString(expectedLinks)));
 
     // 3. Test the json in the response.
     ResultActions result3 = this.mockMvc.perform(get(pathToTest));
@@ -79,13 +86,15 @@ class BookControllerTest {
     ResultActions result4 = this.mockMvc.perform(get(pathToTest));
     result4.andExpect(status().isOk());
     String expectedBookDTOAsJson = objectMapper.writeValueAsString(firstBook);
-    result4.andExpect(content().json(expectedBookDTOAsJson));
+    result4.andExpect(content().json(expectedBookDTOAsJson))
+        .andExpect(content().string(containsString(expectedLinks)));
 
     // 5. My preferred way - very similar to number 4, but done more fluently.
     String expectedBookDTOAsJson5 = objectMapper.writeValueAsString(firstBook);
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedBookDTOAsJson5));
+        .andExpect(content().json(expectedBookDTOAsJson5))
+        .andExpect(content().string(containsString(expectedLinks)));
   }
 
   @Test
@@ -108,10 +117,13 @@ class BookControllerTest {
 
     when(service.findBooks(null)).thenReturn(bookList);
 
-    String expectedBookListAsJson = objectMapper.writeValueAsString(bookList);
+    String expectedResponse = """
+        {"_embedded":{"bookDTOList":[{"author":"George Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}},{"author":"George Orwell 2","isbn":"2","title":"Animal Farm 2","_links":{"self":{"href":"http://localhost/books/2"},"books":{"href":"http://localhost/books?title="}}}]},"_links":{"self":{"href":"http://localhost/books?title="}}}"
+        """;
+
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedBookListAsJson));
+        .andExpect(content().json(expectedResponse));
   }
 
   @Test
@@ -124,10 +136,13 @@ class BookControllerTest {
 
     when(service.findBooks(title)).thenReturn(bookList);
 
-    String expectedBookListAsJson = objectMapper.writeValueAsString(bookList);
+    String expectedResponse = """
+        {"_embedded":{"bookDTOList":[{"author":"George Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}},{"author":"George Orwell 2","isbn":"2","title":"Animal Farm 2","_links":{"self":{"href":"http://localhost/books/2"},"books":{"href":"http://localhost/books?title="}}}]},"_links":{"self":{"href":"http://localhost/books?title="}}}"
+        """;
+
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedBookListAsJson));
+        .andExpect(content().json(expectedResponse));
   }
 
   @Test
@@ -139,10 +154,8 @@ class BookControllerTest {
 
     when(service.findBooks(title)).thenReturn(List.of());
 
-    String expectedResponseContent = "[]";
     this.mockMvc.perform(get(pathToTest))
-        .andExpect(status().isOk())
-        .andExpect(content().json(expectedResponseContent));
+        .andExpect(status().isNotFound());
   }
 
   @Test

@@ -1,8 +1,15 @@
 package uk.co.cadogsoftware.api.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.co.cadogsoftware.api.assemblers.BookModelAssembler;
 import uk.co.cadogsoftware.api.dtos.BookDTO;
+import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
 import uk.co.cadogsoftware.api.services.BookService;
 
 /**
@@ -24,6 +33,8 @@ import uk.co.cadogsoftware.api.services.BookService;
 public class BookController {
 
   private final BookService bookService;
+
+  private final BookModelAssembler bookModelAssembler;
 
   /**
    * Get all of the {@link BookDTO}s.
@@ -41,14 +52,23 @@ public class BookController {
    * @param title - an optional title to filter the results by.
    * @return - all books or books containing the given title.
    */
-  // Aggregate root
-  // tag::get-aggregate-root[]
   @GetMapping("/books")
-  public List<BookDTO> findBooks(@RequestParam(required = false) String title) {
+  public CollectionModel<EntityModel<BookDTO>> getBooks(
+      @RequestParam(required = false) String title) {
     log.debug("Getting all books with a title that contains: {} ", title);
-    return bookService.findBooks(title);
+
+    List<BookDTO> books = bookService.findBooks(title);
+    if (CollectionUtils.isEmpty(books)) {
+      throw new BookNotFoundException("No books found for title " + title);
+    }
+
+    List<EntityModel<BookDTO>> booksModels = books.stream()
+        .map(bookModelAssembler::toModel)
+        .toList();
+
+    return CollectionModel.of(booksModels,
+        linkTo(methodOn(BookController.class).getBooks("")).withSelfRel());
   }
-  // end::get-aggregate-root[]
 
   /**
    * Gets a single book. Note that as we are getting a resource we use {@link PathVariable}, not
@@ -58,9 +78,9 @@ public class BookController {
    * @return - the Book with the given ISBN.
    */
   @GetMapping("/books/{isbn}")
-  public BookDTO getOneBook(@PathVariable(value = "isbn") String isbn) {
+  public EntityModel<BookDTO> getOneBook(@PathVariable(value = "isbn") String isbn) {
     // TODO: validate input
-    return bookService.getBook(isbn);
+    return bookModelAssembler.toModel(bookService.getBook(isbn));
   }
 
   @PostMapping("/books")
