@@ -58,43 +58,43 @@ class BookControllerTest {
     There are several ways of testing the response from the controller here.
     We obviously only need to follow one of these patterns,
     but I'm showing them here as examples of what is possible.
-    My preferred method is the last one - number 5.
+    My preferred method is the last one - number 4.
     */
 
     String expectedLinks = "\"_links\":{\"self\":{\"href\":\"http://localhost/books/1\"},\"books\":{\"href\":\"http://localhost/books?title=\"}}";
 
-    // 1. Call the Controller and test that the response contains what we expect.
+    // 1. Call the Controller and test that the response contains some of what we expect.
     this.mockMvc.perform(get(pathToTest)).andDo(print()).andExpect(status().isOk())
         .andExpect(content().string(containsString("Animal Farm")))
         .andExpect(content().string(containsString(expectedLinks)));
 
-    // 2. Split it up a bit and test the json in the response as a json String.
+    // 2. Split it up a bit and test the json in the response.
+    // Note that this does not do strict json checking so the json we are expecting is not the
+    // complete json, just some of it. Use json(String, true) to enable strict checking.
     ResultActions result2 = this.mockMvc.perform(get(pathToTest));
     result2.andExpect(status().isOk())
         .andExpect(content().json(
             "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}"
         )).andExpect(content().string(containsString(expectedLinks)));
 
-    // 3. Test the json in the response.
+    // 3. Test the book is returned in the response.
     ResultActions result3 = this.mockMvc.perform(get(pathToTest));
     result3.andExpect(status().isOk());
     String responseAsString = result3.andReturn().getResponse().getContentAsString();
-    BookDTO response = objectMapper.readValue(responseAsString, BookDTO.class);
-    assertEquals(firstBook, response);
+    BookDTO bookFromResponse = objectMapper.readValue(responseAsString, BookDTO.class);
+    assertEquals(firstBook, bookFromResponse);
 
-    // 4. Test the json in the response more efficiently.
-    ResultActions result4 = this.mockMvc.perform(get(pathToTest));
-    result4.andExpect(status().isOk());
+    // 4. My preferred way - test the complete response, including the HATEOAS links.
+    // Note the 'strict' checking of the json here.
+    String expectedCompleteResponse = """
+        {"author":"George Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}}
+        """;
     String expectedBookDTOAsJson = objectMapper.writeValueAsString(firstBook);
-    result4.andExpect(content().json(expectedBookDTOAsJson))
-        .andExpect(content().string(containsString(expectedLinks)));
-
-    // 5. My preferred way - very similar to number 4, but done more fluently.
-    String expectedBookDTOAsJson5 = objectMapper.writeValueAsString(firstBook);
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedBookDTOAsJson5))
-        .andExpect(content().string(containsString(expectedLinks)));
+        .andExpect(content().json(expectedBookDTOAsJson)) // overkill as we are checking the whole response but left in here to show what is possible.
+        .andExpect(content().string(containsString(expectedLinks))) // again, this is overkill.
+        .andExpect(content().json(expectedCompleteResponse, true)); // note the strict checking here.
   }
 
   @Test
