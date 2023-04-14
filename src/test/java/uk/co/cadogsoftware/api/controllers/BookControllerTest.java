@@ -122,6 +122,7 @@ class BookControllerTest {
             "Book cannot be found for ISBN: " + isbn)));
   }
 
+  // TODO: use a parameterized test for the next two tests.
   @Test
   void getBooks_NoTitleFilter() throws Exception {
     String pathToTest = "/books";
@@ -136,7 +137,6 @@ class BookControllerTest {
         .andExpect(content().json(EXPECTED_ALL_BOOKS_RESPONSE));
   }
 
-  // TODO: use a parameterized test above and next.
   @Test
   void getBooks_WithTitleFilter_BooksFound() throws Exception {
     String title = "fred";
