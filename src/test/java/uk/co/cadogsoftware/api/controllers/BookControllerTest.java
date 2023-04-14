@@ -71,13 +71,13 @@ class BookControllerTest {
     // 2. Split it up a bit and test the json in the response.
     // Note that this does not do strict json checking so the json we are expecting is not the
     // complete json, just some of it. Use json(String, true) to enable strict checking.
+    String bookOneAsJson = "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}";
     ResultActions result2 = this.mockMvc.perform(get(pathToTest));
     result2.andExpect(status().isOk())
-        .andExpect(content().json(
-            "{ \"author\": \"George Orwell\", \"isbn\": \"1\", \"title\": \"Animal Farm\"}"
-        )).andExpect(content().string(containsString(expectedLinks)));
+        .andExpect(content().json(bookOneAsJson))
+        .andExpect(content().string(containsString(expectedLinks)));
 
-    // 3. Test the book is returned in the response.
+    // 3. Test the book is returned in the response. This does not test the HATEOAS links.
     ResultActions result3 = this.mockMvc.perform(get(pathToTest));
     result3.andExpect(status().isOk());
     String responseAsString = result3.andReturn().getResponse().getContentAsString();
@@ -92,9 +92,12 @@ class BookControllerTest {
     String expectedBookDTOAsJson = objectMapper.writeValueAsString(firstBook);
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
-        .andExpect(content().json(expectedBookDTOAsJson)) // overkill as we are checking the whole response but left in here to show what is possible.
-        .andExpect(content().string(containsString(expectedLinks))) // again, this is overkill.
-        .andExpect(content().json(expectedCompleteResponse, true)); // note the strict checking here.
+        // The next line is overkill as we are checking the whole response later, but left in here to show what is possible.
+        .andExpect(content().json(expectedBookDTOAsJson))
+        // Again, the next line is overkill as we are checking the complete response in the line after.
+        .andExpect(content().string(containsString(expectedLinks)))
+        // Note the strict json checking in the next line.
+        .andExpect(content().json(expectedCompleteResponse, true));
   }
 
   @Test
