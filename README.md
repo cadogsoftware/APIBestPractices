@@ -27,7 +27,5 @@ curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn"
 
 ### TODO
 
-Validate input to Controllers
-HATEOS
-Postman pack - add more
+Postman pack - add more assertions?
 CI/CD ?
