@@ -3,8 +3,9 @@ package uk.co.cadogsoftware.api.controllers;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
@@ -79,19 +80,20 @@ public class BookController {
    */
   @GetMapping("/books/{isbn}")
   public EntityModel<BookDTO> getOneBook(@PathVariable(value = "isbn") String isbn) {
-    // TODO: validate input
+    // Note that we do not need to check that the isbn is not empty here as it is
+    // a path variable. If it were empty then the request would get all books.
     return bookModelAssembler.toModel(bookService.getBook(isbn));
   }
 
   @PostMapping("/books")
-  public EntityModel<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
-    // TODO: validate input
+  public EntityModel<BookDTO> addBook(@Valid @RequestBody BookDTO bookDTO) {
     return bookModelAssembler.toModel(bookService.addBook(bookDTO));
   }
 
   @DeleteMapping("books/{isbn}")
   public void deleteBook(@PathVariable String isbn) {
-    // TODO: validate isbn here.
+    // Note that we do not need to check that the isbn is not empty here as it is
+    // a path variable. If it were empty then the request would be rejected.
     bookService.removeBook(isbn);
   }
 

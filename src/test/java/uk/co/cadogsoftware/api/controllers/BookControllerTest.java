@@ -176,6 +176,17 @@ class BookControllerTest {
   }
 
   @Test
+  void addBook_InvalidBook() throws Exception {
+    String pathToTest = "/books";
+
+    BookDTO invalidBookNoAuthor = new BookDTO("", "1", "Animal Farm");
+    String bookAsJson = objectMapper.writeValueAsString(invalidBookNoAuthor);
+
+    this.mockMvc.perform(post(pathToTest).content(bookAsJson).contentType("application/hal+json"))
+        .andExpect(status().is4xxClientError());
+  }
+
+  @Test
   @DisplayName("Deleting a book that exists returns ok.")
   void removeBook_Exists() throws Exception {
     String pathToTest = "/books/1";
