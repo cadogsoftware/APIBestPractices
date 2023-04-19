@@ -42,6 +42,9 @@ class BookControllerTest {
   private static final String EXPECTED_LINKS_SINGLE_BOOK = """
         "_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}""";
 
+  private static final BookDTO FIRST_BOOK = new BookDTO("George Orwell", "1", "Animal Farm");
+  private static final BookDTO SECOND_BOOK = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -61,9 +64,8 @@ class BookControllerTest {
   @Test
   void getOneBook_ShouldReturnTheCorrectBook() throws Exception {
     String pathToTest = "/books/1";
-    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
 
-    when(service.getBook("1")).thenReturn(firstBook);
+    when(service.getBook("1")).thenReturn(FIRST_BOOK);
 
     /*
     There are several ways of testing the response from the controller here.
@@ -93,11 +95,11 @@ class BookControllerTest {
     result3.andExpect(status().isOk());
     String responseAsString = result3.andReturn().getResponse().getContentAsString();
     BookDTO bookFromResponse = objectMapper.readValue(responseAsString, BookDTO.class);
-    assertEquals(firstBook, bookFromResponse);
+    assertEquals(FIRST_BOOK, bookFromResponse);
 
     // 4. My preferred way - test the complete response, including the HATEOAS links.
     // Note the 'strict' checking of the json here.
-    String expectedBookDTOAsJson = objectMapper.writeValueAsString(firstBook);
+    String expectedBookDTOAsJson = objectMapper.writeValueAsString(FIRST_BOOK);
     this.mockMvc.perform(get(pathToTest))
         .andExpect(status().isOk())
         // The next line is overkill as we are checking the whole response later,
@@ -126,9 +128,7 @@ class BookControllerTest {
   @Test
   void getBooks_NoTitleFilter() throws Exception {
     String pathToTest = "/books";
-    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
-    BookDTO secondBook = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
-    List<BookDTO> bookList = List.of(firstBook, secondBook);
+    List<BookDTO> bookList = List.of(FIRST_BOOK, SECOND_BOOK);
 
     when(service.findBooks(null)).thenReturn(bookList);
 
@@ -141,9 +141,7 @@ class BookControllerTest {
   void getBooks_WithTitleFilter_BooksFound() throws Exception {
     String title = "fred";
     String pathToTest = "/books?title=" + title;
-    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
-    BookDTO secondBook = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
-    List<BookDTO> bookList = List.of(firstBook, secondBook);
+    List<BookDTO> bookList = List.of(FIRST_BOOK, SECOND_BOOK);
 
     when(service.findBooks(title)).thenReturn(bookList);
 
@@ -168,14 +166,13 @@ class BookControllerTest {
   @Test
   void addBook() throws Exception {
     String pathToTest = "/books";
-    BookDTO firstBook = new BookDTO("George Orwell", "1", "Animal Farm");
-    when(service.addBook(firstBook)).thenReturn(firstBook);
+    when(service.addBook(FIRST_BOOK)).thenReturn(FIRST_BOOK);
 
-    String firstBookAsJson = objectMapper.writeValueAsString(firstBook);
+    String firstBookAsJson = objectMapper.writeValueAsString(FIRST_BOOK);
 
-    this.mockMvc.perform(post(pathToTest).content(firstBookAsJson).contentType("application/json"))
+    this.mockMvc.perform(post(pathToTest).content(firstBookAsJson).contentType("application/hal+json"))
         .andExpect(status().isOk())
-        .andExpect(content().json(firstBookAsJson));
+        .andExpect(content().json(EXPECTED_SINGLE_BOOK_RESPONSE, true));
   }
 
   @Test

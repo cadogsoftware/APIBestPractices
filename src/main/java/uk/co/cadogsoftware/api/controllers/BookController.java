@@ -84,9 +84,9 @@ public class BookController {
   }
 
   @PostMapping("/books")
-  public BookDTO addBook(@RequestBody BookDTO bookDTO) {
+  public EntityModel<BookDTO> addBook(@RequestBody BookDTO bookDTO) {
     // TODO: validate input
-    return bookService.addBook(bookDTO);
+    return bookModelAssembler.toModel(bookService.addBook(bookDTO));
   }
 
   @DeleteMapping("books/{isbn}")
