@@ -1,3 +1,10 @@
+# API Best Practices
+
+This repository contains code that demonstrates API Best Practices when creating REST
+based services with Java and Spring Boot.
+
+It contains an application that allows CRUD operations on Books. As well
+as the source code there are comprehensive unit tests and integration tests.
 
 ## Useful commands for this project
 
@@ -5,10 +12,21 @@
 ./mvnw clean spring-boot:run
 
 ### To manually test:
+```
 curl -v -X GET localhost:8080/books
 curl -v -X GET localhost:8080/books/1-2-3
 curl -X DELETE localhost:8080/books/1-2-3
-curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 9-9-9, "title": "Test Book", "author": "Sandy Orchid Else"}'
+curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 9-9-9, "title": "Test Book", "author": "Sandy Else"}'
+```
+or using a modified structure for a Book (to mimic a required but non-breaking change):
+
+```
+curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 8-8-8, "title": "Test Book", "authorFirstName": "Sandy", "authorLastName": "Else"}'
+```
+
+### Running the integration tests
+Start up the application as detailed above, then open the file called API_Best_Practices.postman_collection.json from the 'integration' folder
+in the Postman application. Run the collection from there.
 
 ## Helpful Guides
 
