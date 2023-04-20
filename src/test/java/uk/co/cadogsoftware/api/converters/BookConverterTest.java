@@ -3,6 +3,8 @@ package uk.co.cadogsoftware.api.converters;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_1;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_2;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_JUST_AUTHOR;
+import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOKDTO_NO_AUTHOR;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOK_1;
 import static uk.co.cadogsoftware.api.testutils.TestFixtures.TEST_BOOK_2;
 
@@ -25,12 +27,31 @@ class BookConverterTest {
   private final BookConverter bookConverter = new BookConverter();
 
   @Test
-  void convertToBook() {
+  void convertToBook_WithAuthor() {
+    Book book = bookConverter.convertToBook(TEST_BOOKDTO_JUST_AUTHOR);
+    assertNotNull(book);
+    assertEquals(TEST_BOOKDTO_JUST_AUTHOR.getAuthor(), book.getAuthor());
+    assertEquals(TEST_BOOKDTO_JUST_AUTHOR.getTitle(), book.getTitle());
+    assertEquals(TEST_BOOKDTO_JUST_AUTHOR.getIsbn(), book.getIsbn());
+  }
+
+  @Test
+  void convertToBook_WithNoAuthor() {
+    Book book = bookConverter.convertToBook(TEST_BOOKDTO_NO_AUTHOR);
+    String expectedAuthor = TEST_BOOKDTO_NO_AUTHOR.getAuthorFirstName() + " " + TEST_BOOKDTO_NO_AUTHOR.getAuthorLastName();
+    assertNotNull(book);
+    assertEquals(expectedAuthor, book.getAuthor());
+    assertEquals(TEST_BOOKDTO_NO_AUTHOR.getTitle(), book.getTitle());
+    assertEquals(TEST_BOOKDTO_NO_AUTHOR.getIsbn(), book.getIsbn());
+  }
+
+  @Test
+  void convertToBook_WithAllAuthorNames() {
     Book book = bookConverter.convertToBook(TEST_BOOKDTO_1);
     assertNotNull(book);
-    assertEquals(TEST_BOOKDTO_1.author(), book.getAuthor());
-    assertEquals(TEST_BOOKDTO_1.title(), book.getTitle());
-    assertEquals(TEST_BOOKDTO_1.isbn(), book.getIsbn());
+    assertEquals(TEST_BOOKDTO_1.getAuthor(), book.getAuthor());
+    assertEquals(TEST_BOOKDTO_1.getTitle(), book.getTitle());
+    assertEquals(TEST_BOOKDTO_1.getIsbn(), book.getIsbn());
   }
 
   @Test

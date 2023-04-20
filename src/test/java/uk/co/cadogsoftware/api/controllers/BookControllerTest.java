@@ -32,18 +32,18 @@ import uk.co.cadogsoftware.api.services.BookService;
 class BookControllerTest {
 
   private static final String EXPECTED_ALL_BOOKS_RESPONSE = """
-      {"_embedded":{"bookDTOList":[{"author":"George Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}},{"author":"George Orwell 2","isbn":"2","title":"Animal Farm 2","_links":{"self":{"href":"http://localhost/books/2"},"books":{"href":"http://localhost/books?title="}}}]},"_links":{"self":{"href":"http://localhost/books?title="}}}"
+      {"_embedded":{"bookDTOList":[{"author":"George Orwell","authorFirstName":"George","authorLastName":"Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}},{"author":"George Orwell2","authorFirstName":"George","authorLastName":"Orwell2","isbn":"2","title":"Animal Farm 2","_links":{"self":{"href":"http://localhost/books/2"},"books":{"href":"http://localhost/books?title="}}}]},"_links":{"self":{"href":"http://localhost/books?title="}}}"
       """;
 
   private static final String EXPECTED_SINGLE_BOOK_RESPONSE = """
-      {"author":"George Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}}
+      {"author":"George Orwell","authorFirstName":"George","authorLastName":"Orwell","isbn":"1","title":"Animal Farm","_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}}
       """;
 
   private static final String EXPECTED_LINKS_SINGLE_BOOK = """
         "_links":{"self":{"href":"http://localhost/books/1"},"books":{"href":"http://localhost/books?title="}}""";
 
-  private static final BookDTO FIRST_BOOK = new BookDTO("George Orwell", "1", "Animal Farm");
-  private static final BookDTO SECOND_BOOK = new BookDTO("George Orwell 2", "2", "Animal Farm 2");
+  private static final BookDTO FIRST_BOOK = new BookDTO("George Orwell", "George", "Orwell", "1", "Animal Farm");
+  private static final BookDTO SECOND_BOOK = new BookDTO("George Orwell2", "George", "Orwell2","2", "Animal Farm 2");
 
   @Autowired
   private MockMvc mockMvc;
@@ -176,10 +176,32 @@ class BookControllerTest {
   }
 
   @Test
-  void addBook_InvalidBook() throws Exception {
+  void addBook_InvalidBook_NoAuthor() throws Exception {
     String pathToTest = "/books";
 
-    BookDTO invalidBookNoAuthor = new BookDTO("", "1", "Animal Farm");
+    BookDTO invalidBookNoAuthor = new BookDTO("", "", "", "1", "Animal Farm");
+    String bookAsJson = objectMapper.writeValueAsString(invalidBookNoAuthor);
+
+    this.mockMvc.perform(post(pathToTest).content(bookAsJson).contentType("application/hal+json"))
+        .andExpect(status().is4xxClientError());
+  }
+
+  @Test
+  void addBook_InvalidBook_NoAuthorFirstName() throws Exception {
+    String pathToTest = "/books";
+
+    BookDTO invalidBookNoAuthor = new BookDTO("", " ", "last", "1", "Animal Farm");
+    String bookAsJson = objectMapper.writeValueAsString(invalidBookNoAuthor);
+
+    this.mockMvc.perform(post(pathToTest).content(bookAsJson).contentType("application/hal+json"))
+        .andExpect(status().is4xxClientError());
+  }
+
+  @Test
+  void addBook_InvalidBook_NoAuthorLastName() throws Exception {
+    String pathToTest = "/books";
+
+    BookDTO invalidBookNoAuthor = new BookDTO(" ", "first", "", "1", "Animal Farm");
     String bookAsJson = objectMapper.writeValueAsString(invalidBookNoAuthor);
 
     this.mockMvc.perform(post(pathToTest).content(bookAsJson).contentType("application/hal+json"))

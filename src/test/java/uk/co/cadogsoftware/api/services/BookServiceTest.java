@@ -102,13 +102,13 @@ class BookServiceTest {
     List<Book> testBookList = List.of(TEST_BOOK_1, TEST_BOOK_2);
     List<BookDTO> testBookDtoList = List.of(TEST_BOOKDTO_1, TEST_BOOKDTO_2);
 
-    when(bookRepository.findByTitleAndAuthor(TEST_BOOKDTO_1.title(),
-        TEST_BOOKDTO_1.author())).thenReturn(testBookList);
+    when(bookRepository.findByTitleAndAuthorLastName(TEST_BOOKDTO_1.getTitle(),
+        TEST_BOOKDTO_1.getAuthorLastName())).thenReturn(testBookList);
 
     BookAlreadyExistsException bookAlreadyExistsException = assertThrows(
         BookAlreadyExistsException.class,
         () -> bookService.addBook(TEST_BOOKDTO_1));
-    assertEquals("Book already exists for title: Animal Farm and author: George Orwell",
+    assertEquals("Book already exists for title: Animal Farm and author last name: Orwell",
         bookAlreadyExistsException.getMessage());
   }
 
@@ -116,8 +116,8 @@ class BookServiceTest {
   void addBook_DoesNotAlreadyExist() {
     List<Book> testBookList = List.of(TEST_BOOK_1, TEST_BOOK_2);
 
-    when(bookRepository.findByTitleAndAuthor(TEST_BOOKDTO_3.title(),
-        TEST_BOOKDTO_3.author())).thenReturn(Collections.emptyList());
+    when(bookRepository.findByTitleAndAuthorLastName(TEST_BOOKDTO_3.getTitle(),
+        TEST_BOOKDTO_3.getAuthorLastName())).thenReturn(Collections.emptyList());
 
     BookDTO returnedBook = bookService.addBook(TEST_BOOKDTO_3);
     verify(bookRepository).save(bookConverter.convertToBook(TEST_BOOKDTO_3));

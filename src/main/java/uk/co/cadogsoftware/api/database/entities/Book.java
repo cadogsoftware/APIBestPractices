@@ -19,15 +19,30 @@ public class Book {
 
   @Getter
   private @Id @GeneratedValue Long id;
+
   @Getter
-  private String author;
+  private String authorFirstName;
+
+  @Getter
+  private String authorLastName;
   @Getter
   private String isbn;
   @Getter
   private String title;
 
-  public Book(String author, String isbn, String title) {
-    this.author = author;
+  public String getAuthor() {
+    return this.authorFirstName + " " + this.authorLastName;
+  }
+
+  public void setAuthor(String author) {
+    String[] parts = author.split(" ");
+    this.authorFirstName = parts[0];
+    this.authorLastName = parts[1];
+  }
+
+  public Book(String authorFirstName, String authorLastName, String isbn, String title) {
+    this.authorFirstName = authorFirstName;
+    this.authorLastName = authorLastName;
     this.isbn = isbn;
     this.title = title;
   }
