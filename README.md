@@ -25,7 +25,7 @@ curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn"
 ```
 
 ### Running the integration tests
-Start up the application as detailed above, then open the file called API_Best_Practices.postman_collection.json from the 'integration' folder
+Start up the application as detailed above, then open the file called 'API_Best_Practices.postman_collection.json' from the 'integration' folder
 in the Postman application. Run the collection from there.
 
 ## Helpful Guides
@@ -45,8 +45,3 @@ in the Postman application. Run the collection from there.
 For Bean validation:
 * [A useful bean validation question on Stack Overflow](https://stackoverflow.com/questions/72456958/spring-custom-validator-with-dependencies-on-other-fields)
 * [Baledung Bean Validation](https://www.baeldung.com/spring-mvc-custom-validator#custom-class-level-validation)
-
-### TODO
-
-Postman pack - add more assertions?
-CI/CD ?
