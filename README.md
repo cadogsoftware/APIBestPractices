@@ -24,6 +24,9 @@ curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn"
 * [RedHat - What is a REST API?](https://www.redhat.com/en/topics/api/what-is-a-rest-api)
 * [Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
 
+For Bean validation:
+* [A useful bean validation question on Stack Overflow](https://stackoverflow.com/questions/72456958/spring-custom-validator-with-dependencies-on-other-fields)
+* [Baledung Bean Validation](https://www.baeldung.com/spring-mvc-custom-validator#custom-class-level-validation)
 
 ### TODO
 
