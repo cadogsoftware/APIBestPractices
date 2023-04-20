@@ -9,7 +9,11 @@ as the source code there are comprehensive unit tests and integration tests.
 ## Useful commands for this project
 
 ### To start up:
+Clone this repository then run this command:
+
+```
 ./mvnw clean spring-boot:run
+```
 
 ### To manually test:
 ```
