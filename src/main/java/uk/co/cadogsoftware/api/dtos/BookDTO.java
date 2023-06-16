@@ -23,6 +23,4 @@ public class BookDTO {
     @NotEmpty(message = "title must be provided")
     private final String title;
 
-
-
 }
