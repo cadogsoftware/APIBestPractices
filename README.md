@@ -9,8 +9,13 @@ as the source code there are comprehensive unit tests and integration tests.
 ## Useful commands for this project
 
 ### To start up:
-Clone this repository then run this command:
+Clone the repository:
 
+```
+git clone https://github.com/cadogsoftware/APIBestPractices.git
+```
+
+Run the project:
 ```
 ./mvnw clean spring-boot:run
 ```
@@ -20,12 +25,12 @@ Clone this repository then run this command:
 curl -v -X GET localhost:8080/books
 curl -v -X GET localhost:8080/books/1-2-3
 curl -X DELETE localhost:8080/books/1-2-3
-curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 9-9-9, "title": "Test Book", "author": "Sandy Else"}'
+curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : "9-9-9", "title": "Test Book", "author": "Sandy Else"}'
 ```
 or using a modified structure for a Book (to mimic a required but non-breaking change):
 
 ```
-curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : 8-8-8, "title": "Test Book", "authorFirstName": "Sandy", "authorLastName": "Else"}'
+curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : "8-8-8", "title": "Test Book 2", "authorFirstName": "Sandy", "authorLastName": "Else"}'
 ```
 
 ### Running the integration tests
