@@ -124,7 +124,6 @@ class BookControllerTest {
             "Book cannot be found for ISBN: " + isbn)));
   }
 
-  // TODO: use a parameterized test for the next two tests.
   @Test
   void getBooks_NoTitleFilter() throws Exception {
     String pathToTest = "/books";

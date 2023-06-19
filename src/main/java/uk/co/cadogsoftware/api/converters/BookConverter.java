@@ -15,15 +15,8 @@ public class BookConverter {
 
   public Book convertToBook(BookDTO bookDTO) {
     // Create the book from the new structure.
-    Book book = new Book(bookDTO.getAuthorFirstName(), bookDTO.getAuthorLastName(),
+    return new Book(bookDTO.getAuthorFirstName(), bookDTO.getAuthorLastName(),
         bookDTO.getIsbn(), bookDTO.getTitle());
-
-    // If the old format has been passed in use that.
-    if (StringUtils.hasText(bookDTO.getAuthor())) {
-      book.setAuthor(bookDTO.getAuthor());
-    }
-
-    return book;
   }
 
   public BookDTO convertToBookDTO(Book book) {

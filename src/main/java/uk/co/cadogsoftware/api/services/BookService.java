@@ -54,7 +54,6 @@ public class BookService {
     } else {
       log.warn("Book requested for deletion but was not found for ISBN: {}", isbn);
     }
-
   }
 
   public BookDTO addBook(BookDTO bookDto) {
@@ -63,10 +62,10 @@ public class BookService {
       throw new BookAlreadyExistsException("Book already exists for ISBN: " + bookDto.getIsbn());
     }
 
-    if (doesBookExistByTitleAndAuthorLastName(bookDto)) { // TODO: use first name too here.
+    if (doesBookExistByTitleAndAuthor(bookDto)) {
       throw new BookAlreadyExistsException(
-          "Book already exists for title: " + bookDto.getTitle() + " and author last name: "
-              + bookDto.getAuthorLastName());
+          "Book already exists with title: " + bookDto.getTitle() + " and author: "
+              + bookDto.getAuthorFirstName() + " " + bookDto.getAuthorLastName());
     }
 
     Book book = bookConverter.convertToBook(bookDto);
@@ -75,9 +74,11 @@ public class BookService {
     return bookDto;
   }
 
-  private boolean doesBookExistByTitleAndAuthorLastName(BookDTO bookDtoToLookFor) {
-    List<Book> allMatchingBooksByTitleAndAuthor = bookRepository.findByTitleAndAuthorLastName(
-        bookDtoToLookFor.getTitle(), bookDtoToLookFor.getAuthorLastName());
+  private boolean doesBookExistByTitleAndAuthor(BookDTO bookDtoToLookFor) {
+    List<Book> allMatchingBooksByTitleAndAuthor =
+        bookRepository.findByTitleAndAuthorFirstNameAndAuthorLastName(
+        bookDtoToLookFor.getTitle(), bookDtoToLookFor.getAuthorFirstName(),
+        bookDtoToLookFor.getAuthorLastName());
     return !allMatchingBooksByTitleAndAuthor.isEmpty();
   }
 
