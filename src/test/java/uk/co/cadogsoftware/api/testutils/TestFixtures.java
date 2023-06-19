@@ -5,6 +5,9 @@ import lombok.experimental.UtilityClass;
 import uk.co.cadogsoftware.api.database.entities.Book;
 import uk.co.cadogsoftware.api.dtos.BookDTO;
 
+/**
+ * A helper test class to hold test 'constants.
+ */
 @UtilityClass
 public class TestFixtures {
   public static final String AUTHOR_1_FIRSTNAME = "George";

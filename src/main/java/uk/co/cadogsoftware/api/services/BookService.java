@@ -14,6 +14,7 @@ import uk.co.cadogsoftware.api.exceptions.BookNotFoundException;
 
 /**
  * A class that controls interactions with books.
+ *
  * <p>
  * Handles the conversion of {@link BookDTO}s to {@link Book}s and vice versa with use of the
  * {@link BookConverter}.
@@ -64,7 +65,8 @@ public class BookService {
 
     if (doesBookExistByTitleAndAuthorLastName(bookDto)) { // TODO: use first name too here.
       throw new BookAlreadyExistsException(
-          "Book already exists for title: " + bookDto.getTitle() + " and author last name: " + bookDto.getAuthorLastName());
+          "Book already exists for title: " + bookDto.getTitle() + " and author last name: "
+              + bookDto.getAuthorLastName());
     }
 
     Book book = bookConverter.convertToBook(bookDto);

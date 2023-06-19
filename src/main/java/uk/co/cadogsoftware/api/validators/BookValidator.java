@@ -6,6 +6,9 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+/**
+ * Validates book data.
+ */
 @Component
 public class BookValidator
     implements ConstraintValidator<BookValidation, Object> {

@@ -20,7 +20,21 @@ Run the project:
 ./mvnw clean spring-boot:run
 ```
 
+### Running the unit tests
+The unit test coverage is nice and high and can be run in the usual way for a Java based maven project:
+
+``` 
+mvn clean test
+```
+
+### Running the integration tests
+Start up the application as detailed above, then open the file called 'API_Best_Practices.postman_collection.json' from the 'integration' folder
+in the Postman application. Run the collection from there.
+
 ### To manually test:
+
+Make sure you have started up the application and then enter these commands:
+
 ```
 curl -v -X GET localhost:8080/books
 curl -v -X GET localhost:8080/books/1-2-3
@@ -33,9 +47,6 @@ or using a modified structure for a Book (to mimic a required but non-breaking c
 curl -X POST localhost:8080/books -H 'Content-type:application/json' -d '{"isbn" : "8-8-8", "title": "Test Book 2", "authorFirstName": "Sandy", "authorLastName": "Else"}'
 ```
 
-### Running the integration tests
-Start up the application as detailed above, then open the file called 'API_Best_Practices.postman_collection.json' from the 'integration' folder
-in the Postman application. Run the collection from there.
 
 ## Helpful Guides
 

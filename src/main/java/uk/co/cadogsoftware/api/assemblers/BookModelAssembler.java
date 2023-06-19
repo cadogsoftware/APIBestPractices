@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import uk.co.cadogsoftware.api.controllers.BookController;
 import uk.co.cadogsoftware.api.dtos.BookDTO;
 
+/**
+ * Creates HATOAS links in the BootDTO ready to be sent in the REST response.
+ */
 @Component
 public class BookModelAssembler implements RepresentationModelAssembler<BookDTO, EntityModel<BookDTO>> {
 
