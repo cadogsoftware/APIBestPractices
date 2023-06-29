@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>uk.co.cadogsoftware</groupId>
 	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>api-best-practices</name>
 	<description>Spring API Best Practices</description>
 	<properties>
